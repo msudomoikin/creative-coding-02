@@ -1,41 +1,14 @@
 import alphabet from "./alphabet.js";
+import { drawPixel } from "./draw.js";
+import { PIXEL_SIZE } from "./consts.js";
 
 // Размер пикселя
-const PIXEL_SIZE = 25;
 
 // Создаем холст
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+export const ctx = canvas.getContext("2d");
 
 // Функция для закрашивания пикселя
-function drawPixel(x, y) {
-    // Выбираем случайный цвет
-    ctx.fillStyle = getRandomColor();
-  
-    // Закрашиваем пиксель
-    ctx.fillRect(x * PIXEL_SIZE, y * PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-  
-    // Рисуем внутри пикселя прямоугольный треугольник
-    ctx.beginPath();
-    ctx.moveTo(x * PIXEL_SIZE, y * PIXEL_SIZE);
-    ctx.lineTo(x * PIXEL_SIZE, (y + 1) * PIXEL_SIZE);
-    ctx.lineTo((x + 1) * PIXEL_SIZE, (y + 1) * PIXEL_SIZE);
-    ctx.closePath();
-  
-    // Закрашиваем треугольник
-    ctx.fillStyle = '#000'; // Цвет треугольника
-    ctx.fill();
-  }
-
-function getRandomColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-  
 
 // Функция для "печати" букв
 function printWord(word) {
@@ -50,27 +23,14 @@ function printWord(word) {
         drawPixel(x + dx, y + dy);
       });
 
-      x += 10; // Добавляем пробел между буквами
+      x += 8; // Добавляем пробел между буквами
     }
   }
-}
-
-function drawGrid() {
-  for (let x = 0; x <= canvas.width; x += PIXEL_SIZE) {
-    for (let y = 0; y <= canvas.height; y += PIXEL_SIZE) {
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, canvas.height);
-      ctx.moveTo(0, y);
-      ctx.lineTo(canvas.width, y);
-    }
-  }
-  ctx.strokeStyle = "#ddd"; // Цвет сетки
-  ctx.stroke();
 }
 
 function addLabels() {
   ctx.fillStyle = "#000"; // Цвет текста
-  ctx.font = "12px Arial"; // Шрифт текста
+  ctx.font = "9px Arial"; // Шрифт текста
   for (let x = 0; x <= canvas.width / PIXEL_SIZE; x++) {
     ctx.fillText(x, x * PIXEL_SIZE, 12); // Подписи сверху
   }
@@ -79,8 +39,33 @@ function addLabels() {
   }
 }
 
-drawGrid();
+function getRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// drawGrid();
 addLabels();
 
 // Используем функцию
-printWord("Abc");
+// printWord("Abc");
+
+canvas.style.backgroundColor = "#000";
+
+const columns = canvas.width / PIXEL_SIZE;
+const rows = canvas.height / PIXEL_SIZE;
+
+// Функция для рисования пикселей в каждой колонке
+function fillCanvas() {
+  // Очистка холста
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let x = 0; x < columns; x++) {
+    const height = getRandomNumber(0, rows);
+    for (let y = rows - 1; y >= rows - height; y--) {
+      drawPixel(x, y, height);
+    }
+  }
+  requestAnimationFrame(fillCanvas);
+}
+
+fillCanvas();
