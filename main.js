@@ -65,7 +65,7 @@ function fillCanvas() {
       drawPixel(x, y, height);
     }
   }
-  requestAnimationFrame(fillCanvas);
+  // requestAnimationFrame(fillCanvas);
 }
 
 fillCanvas();
